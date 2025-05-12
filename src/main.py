@@ -3,8 +3,8 @@ from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
 import os
 import uvicorn
-from expense_processor import ExpenseProcessor
-from sheets_handler import SheetsHandler
+from src.expense_processor import ExpenseProcessor
+from src.sheets_handler import SheetsHandler
 import logging
 
 # Set up logging
