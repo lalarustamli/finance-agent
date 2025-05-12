@@ -17,10 +17,11 @@ class SheetsHandler:
     def _get_credentials(self):
         try:
             # Get credentials from environment variable
-            credentials_json = os.getenv('GOOGLE_CREDENTIALS')
+            with open('./credentials.json', 'r') as f:
+                credentials_json = f.read()
+
             if not credentials_json:
                 raise ValueError("GOOGLE_CREDENTIALS environment variable not set")
-            
             # Parse the JSON string from environment variable
             credentials_info = json.loads(credentials_json)
             
