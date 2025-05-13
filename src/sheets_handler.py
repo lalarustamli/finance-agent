@@ -16,7 +16,7 @@ class SheetsHandler:
     
     def _get_credentials(self):
         try:
-            # Get credentials from environment variable
+            # Get credentials from the './credentials.json' file
             with open('./credentials.json', 'r') as f:
                 credentials_json = f.read()
 
