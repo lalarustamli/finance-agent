@@ -21,7 +21,7 @@ class SheetsHandler:
                 credentials_json = f.read()
 
             if not credentials_json:
-                raise ValueError("GOOGLE_CREDENTIALS environment variable not set")
+                raise ValueError("The credentials file './credentials.json' is missing or empty")
             # Parse the JSON string from environment variable
             credentials_info = json.loads(credentials_json)
             
