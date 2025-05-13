@@ -1,9 +1,7 @@
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import os
-import pickle
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,36 +15,27 @@ class SheetsHandler:
         self.creds = self._get_credentials()
     
     def _get_credentials(self):
-        creds = None
-        # The file token.pickle stores the user's access and refresh tokens
-        if os.path.exists('token.pickle'):
-            logger.info("Found existing token.pickle file")
-            with open('token.pickle', 'rb') as token:
-                creds = pickle.load(token)
-        
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                logger.info("Refreshing expired credentials")
-                creds.refresh(Request())
-            else:
-                logger.info("Getting new credentials")
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', self.SCOPES)
-                # Add these parameters to handle the OAuth flow better
-                creds = flow.run_local_server(
-                    port=0,
-                    prompt='consent',
-                    authorization_prompt_message='Please authorize the application to access your Google Sheets.',
-                    success_message='Authentication successful! You can close this window.'
-                )
+        try:
+            # Get credentials from the './credentials.json' file
+            with open('./credentials.json', 'r') as f:
+                credentials_json = f.read()
+
+            if not credentials_json:
+                raise ValueError("The credentials file './credentials.json' is missing or empty")
+            # Parse the JSON string from environment variable
+            credentials_info = json.loads(credentials_json)
             
-            # Save the credentials for the next run
-            with open('token.pickle', 'wb') as token:
-                logger.info("Saving new credentials to token.pickle")
-                pickle.dump(creds, token)
-        
-        return creds
+            # Create credentials from service account info
+            credentials = service_account.Credentials.from_service_account_info(
+                credentials_info,
+                scopes=self.SCOPES
+            )
+            
+            return credentials
+            
+        except Exception as e:
+            logger.error(f"Error getting credentials: {str(e)}")
+            raise
     
     def log_expense(self, expense_data: dict):
         logger.info(f"Attempting to log expense: {expense_data}")

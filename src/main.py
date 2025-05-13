@@ -3,8 +3,8 @@ from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
 import os
 import uvicorn
-from expense_processor import ExpenseProcessor
-from sheets_handler import SheetsHandler
+from src.expense_processor import ExpenseProcessor
+from src.sheets_handler import SheetsHandler
 import logging
 
 # Set up logging
@@ -59,4 +59,5 @@ async def webhook(request: Request):
 
 if __name__ == "__main__":
     logger.info("Starting Finance Agent server...")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
